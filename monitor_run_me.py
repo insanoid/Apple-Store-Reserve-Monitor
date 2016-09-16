@@ -29,7 +29,7 @@ def signal_handler(signal, frame):
 
 
 signal.signal(signal.SIGINT, signal_handler)
-print 'iPhone 6/6 Plus Store Monitoring \n'
+print 'Apple Store Monitoring \n'
 
 while True:
   os.system('python storecheck.py')

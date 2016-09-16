@@ -28,88 +28,91 @@ import requests
 import os
 import time
 
-#change this to alter the monitoring stores.
-pref_stores = ['R118', 'R410', 'R270', 'R255','R092']
-	
+## 
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
     FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    
+    ENDC = '\0330m'
+
+# Change this to alter the monitoring stores.
+pref_stores = ['R358', 'R396', 'R352']
+
+
+# Change the country and language for your location.
+storeurl = "https://reserve.cdn-apple.com/DE/de_DE/reserve/iPhone/stores.json"
+availurl = "https://reserve.cdn-apple.com/DE/de_DE/reserve/iPhone/availability.json"
+
+
 def decode(k):
 
-	if(k=="MG4J2B/A"):
-		return bcolors.FAIL + "Apple iPhone 6 Plus Silver - 128GB"
-	elif(k=="MGAJ2B/A"):
-		return bcolors.FAIL + "Apple iPhone 6 Plus Silver - 64GB"
-	elif(k=="MGA82B/A"):
-		return bcolors.FAIL + "Apple iPhone 6 Plus Silver - 16GB"
+    # Incase of a new version, update models here.
+    model_mapping  = {
+        "MN962ZD/A": "iPhone 7 Jet Black - 128 GB",
+        "MN9C2ZD/A": "iPhone 7 Jet Black - 256 GB",
+        "MN8X2ZD/A": "iPhone 7 Black - 32 GB",
+        "MN922ZD/A": "iPhone 7 Black - 128 GB",
+        "MN972ZD/A": "iPhone 7 Black - 256 GB",
+        "MN902ZD/A": "iPhone 7 Gold - 32 GB",
+        "MN942ZD/A": "iPhone 7 Gold - 128 GB",
+        "MN992ZD/A": "iPhone 7 Gold - 256 GB",
+        "MN912ZD/A": "iPhone 7 Rose Gold - 32 GB",
+        "MN952ZD/A": "iPhone 7 Rose Gold - 128 GB",
+        "MN9A2ZD/A": "iPhone 7 Rose Gold - 256 GB",
+        "MN8Y2ZD/A": "iPhone 7 Silver - 32 GB",
+        "MN932ZD/A": "iPhone 7 Silver - 128 GB",
+        "MN982ZD/A": "iPhone 7 Silver - 256 GB",
+        "MN4V2ZD/A": "iPhone 7 Plus Jet Black - 128 GB",
+        "MN512ZD/A": "iPhone 7 Plus Jet Black - 256 GB",
+        "MNQM2ZD/A": "iPhone 7 Plus Black - 32 GB",
+        "MN4M2ZD/A": "iPhone 7 Plus Black - 128 GB",
+        "MN4W2ZD/A": "iPhone 7 Plus Black - 256 GB",
+        "MNQQ2ZD/A": "iPhone 7 Plus Rose Gold - 32 GB",
+		"MN4U2ZD/A": "iPhone 7 Plus Rose Gold- 128 GB",
+		"MN4Y2ZD/A": "iPhone 7 Plus Rose Gold - 256 GB",
+		"MNQP2ZD/A": "iPhone 7 Plus Gold - 32 GB",
+        "MN4Q2ZD/A": "iPhone 7 Plus Gold - 128 GB",
+        "MN502ZD/A": "iPhone 7 Plus Gold - 256 GB",
+        "MNQN2ZD/A": "iPhone 7 Plus Silver - 32 GB",
+        "MN4P2ZD/A": "iPhone 7 Plus Silver - 128 GB",
+        "MN4X2ZD/A": "iPhone 7 Plus Silver - 256 GB",
+		"timeSlot":""
+    }
 
-	elif(k=="MGAC2B/A"):
-		return bcolors.FAIL + "Apple iPhone 6 Plus Grey - 128GB"
-	elif(k=="MGAH2B/A"):
-		return bcolors.FAIL + "Apple iPhone 6 Plus Grey - 64GB"
+    model_name = model_mapping.get(k)
+    if(len(model_name) <= 0):
+        model_name = k
 
-	elif(k=="MGAF2B/A"):
-		return bcolors.FAIL + "Apple iPhone 6 Plus Gold - 128GB"
-	elif(k=="MGAK2B/A"):
-		return bcolors.FAIL + "Apple iPhone 6 Plus Gold - 64GB"
-	elif(k=="MGAA2B/A"):
-		return bcolors.FAIL + "Apple iPhone 6 Plus Gold - 16GB"
-
-	elif(k=="MG4H2B/A"):
-		return bcolors.FAIL + "MG4H2B/A"
-
-	elif(k=="MG4J2B/A"):
-		return bcolors.WARNING + "Apple iPhone 6 Gold - 64GB"
-	elif(k=="MG492B/A"):
-		return bcolors.WARNING + "Apple iPhone 6 Gold - 16GB"
-	elif(k=="MG4E2B/A"):
-		return bcolors.WARNING + "Apple iPhone 6 Gold - 128GB"
-	elif(k=="MG4F2B/A"):
-		return bcolors.WARNING + "Apple iPhone 6 Grey - 64GB"
-	elif(k=="MG472B/A"):
-		return bcolors.WARNING + "Apple iPhone 6 Grey - 16GB"
-	elif(k=="MG4A2B/A"):
-		return bcolors.WARNING + "Apple iPhone 6 Grey - 128GB"
-	elif(k=="MG4C2B/A"):
-		return bcolors.WARNING + "Apple iPhone 6 Silver - 128GB"
-	elif(k=="MG482B/A"):
-		return bcolors.WARNING + "Apple iPhone 6 Silver - 16GB"
-
-	else:
-		return bcolors.FAIL + k;
-
-    
-storeurl = "https://reserve.cdn-apple.com/GB/en_GB/reserve/iPhone/stores.json"
-availurl = "https://reserve.cdn-apple.com/GB/en_GB/reserve/iPhone/availability.json"
+    return  bcolors.FAIL + model_name
 
 
-try:
-	store_json = requests.get(storeurl).json()
-	avail_json = requests.get(availurl).json()
 
-	avail = False
-	avail_in_required = False;
+store_json = requests.get(storeurl).json()
+avail_json = requests.get(availurl).json()
+avail = False
+avail_in_required = False;
 
-	if 'stores' in store_json:
-		for key in store_json['stores']:
-			items =  avail_json[key['storeNumber']]
-			print bcolors.OKGREEN + str(key['storeName'])
-			for k in items:
-				if items[k]==True:
-					print bcolors.OKGREEN + "	-	" + decode(k)
-					avail = True;
-					if key['storeNumber'] in pref_stores:
-						avail_in_required = True;
-		print bcolors.OKBLUE + "Updated: "+ time.strftime('%d, %b %Y %H:%M:%S')  + "\n"
-		if avail_in_required == True:
-			os.system('say -v "Kate" "iPhone\ is Available in the required store!!."')
+if 'stores' in store_json:
+    for key in store_json['stores']:
+        items =  avail_json.get(key.get('storeNumber'))
+        print bcolors.OKGREEN + str(key.get('storeName')) + ", " + str(key.get('storeCity'))
+        items_available = False
+        for k in items:
+            if items[k] == True:
+                print bcolors.OKGREEN + "    -    " + decode(k)
+                avail = True;
+                if key.get('storeNumber') in pref_stores:
+                    avail_in_required = True;
+        if items_available == False:
+            print bcolors.FAIL + "Nothing Available\n"
+    print bcolors.OKBLUE + "Updated: "+ time.strftime('%d, %b %Y %H:%M:%S')  + "\n"
+    if avail_in_required == True:
+        os.system('say -v "Veena" "iPhone\ is Available in the required store!!."')
 
-	else:
-		print bcolors.FAIL + time.strftime('%d, %b %Y %H:%M:%S') + " - Data Unavailable."
-except ValueError:
-	print bcolors.FAIL + time.strftime('%d, %b %Y %H:%M:%S')  + " - Server Unavailable."
+else:
+    print bcolors.FAIL + time.strftime('%d, %b %Y %H:%M:%S') + " - Data Unavailable."

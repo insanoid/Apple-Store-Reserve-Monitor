@@ -28,7 +28,7 @@ import requests
 import os
 import time
 
-## 
+##
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -103,7 +103,7 @@ if 'stores' in store_json:
         print bcolors.OKGREEN + str(key.get('storeName')) + ", " + str(key.get('storeCity'))
         items_available = False
         for k in items:
-            if items[k] == True:
+            if items.get(k) == "UNLOCKED":
                 print bcolors.OKGREEN + "    -    " + decode(k)
                 avail = True;
                 if key.get('storeNumber') in pref_stores:
@@ -112,7 +112,7 @@ if 'stores' in store_json:
             print bcolors.FAIL + "Nothing Available\n"
     print bcolors.OKBLUE + "Updated: "+ time.strftime('%d, %b %Y %H:%M:%S')  + "\n"
     if avail_in_required == True:
-        os.system('say -v "Veena" "iPhone\ is Available in the required store!!."')
+        os.system('say "iPhone\ is Available in the required store!!"')
 
 else:
     print bcolors.FAIL + time.strftime('%d, %b %Y %H:%M:%S') + " - Data Unavailable."

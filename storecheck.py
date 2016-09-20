@@ -85,17 +85,18 @@ def decode(k):
     }
 
     model_name = model_mapping.get(k)
-    if(len(model_name) <= 0):
-        model_name = k
+    if(model_name == None or len(model_name) <= 0):
+        model_name = None
 
-    return  bcolors.FAIL + model_name
+    return model_name
+
 
 
 
 store_json = requests.get(storeurl).json()
 avail_json = requests.get(availurl).json()
-avail = False
-avail_in_required = False;
+items_available = False
+avail_in_required = False
 
 if 'stores' in store_json:
     for key in store_json['stores']:
@@ -103,16 +104,21 @@ if 'stores' in store_json:
         print bcolors.OKGREEN + str(key.get('storeName')) + ", " + str(key.get('storeCity'))
         items_available = False
         for k in items:
-            if items.get(k) == "UNLOCKED":
-                print bcolors.OKGREEN + "    -    " + decode(k)
-                avail = True;
+            if items.get(k) != "NONE":
+                value = decode(k)
+                if value != None:
+                    print bcolors.WARNING + "    -    " + value
+                    items_available = True;
                 if key.get('storeNumber') in pref_stores:
                     avail_in_required = True;
+
         if items_available == False:
             print bcolors.FAIL + "Nothing Available\n"
+
     print bcolors.OKBLUE + "Updated: "+ time.strftime('%d, %b %Y %H:%M:%S')  + "\n"
+
     if avail_in_required == True:
-        os.system('say "iPhone\ is Available in the required store!!"')
+        os.system('say "iPhone is Available in the required store."')
 
 else:
     print bcolors.FAIL + time.strftime('%d, %b %Y %H:%M:%S') + " - Data Unavailable."

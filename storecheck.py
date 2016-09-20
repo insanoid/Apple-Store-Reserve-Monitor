@@ -44,43 +44,45 @@ class bcolors:
 pref_stores = ['R358', 'R396', 'R352']
 
 
-# Change the country and language for your location.
+# Change the country and language for your location for example (DE/de_DE, GB/en_GB)
 storeurl = "https://reserve.cdn-apple.com/DE/de_DE/reserve/iPhone/stores.json"
 availurl = "https://reserve.cdn-apple.com/DE/de_DE/reserve/iPhone/availability.json"
 
 
 def decode(k):
-
+    # Since the ending of the device code changes based on region, we have to ignore it.
+    if len(k) >= 5:
+        k = k[0:5]
     # Incase of a new version, update models here.
     model_mapping  = {
-        "MN962ZD/A": "iPhone 7 Jet Black - 128 GB",
-        "MN9C2ZD/A": "iPhone 7 Jet Black - 256 GB",
-        "MN8X2ZD/A": "iPhone 7 Black - 32 GB",
-        "MN922ZD/A": "iPhone 7 Black - 128 GB",
-        "MN972ZD/A": "iPhone 7 Black - 256 GB",
-        "MN902ZD/A": "iPhone 7 Gold - 32 GB",
-        "MN942ZD/A": "iPhone 7 Gold - 128 GB",
-        "MN992ZD/A": "iPhone 7 Gold - 256 GB",
-        "MN912ZD/A": "iPhone 7 Rose Gold - 32 GB",
-        "MN952ZD/A": "iPhone 7 Rose Gold - 128 GB",
-        "MN9A2ZD/A": "iPhone 7 Rose Gold - 256 GB",
-        "MN8Y2ZD/A": "iPhone 7 Silver - 32 GB",
-        "MN932ZD/A": "iPhone 7 Silver - 128 GB",
-        "MN982ZD/A": "iPhone 7 Silver - 256 GB",
-        "MN4V2ZD/A": "iPhone 7 Plus Jet Black - 128 GB",
-        "MN512ZD/A": "iPhone 7 Plus Jet Black - 256 GB",
-        "MNQM2ZD/A": "iPhone 7 Plus Black - 32 GB",
-        "MN4M2ZD/A": "iPhone 7 Plus Black - 128 GB",
-        "MN4W2ZD/A": "iPhone 7 Plus Black - 256 GB",
-        "MNQQ2ZD/A": "iPhone 7 Plus Rose Gold - 32 GB",
-	"MN4U2ZD/A": "iPhone 7 Plus Rose Gold- 128 GB",
-	"MN4Y2ZD/A": "iPhone 7 Plus Rose Gold - 256 GB",
-	"MNQP2ZD/A": "iPhone 7 Plus Gold - 32 GB",
-        "MN4Q2ZD/A": "iPhone 7 Plus Gold - 128 GB",
-        "MN502ZD/A": "iPhone 7 Plus Gold - 256 GB",
-        "MNQN2ZD/A": "iPhone 7 Plus Silver - 32 GB",
-        "MN4P2ZD/A": "iPhone 7 Plus Silver - 128 GB",
-        "MN4X2ZD/A": "iPhone 7 Plus Silver - 256 GB",
+        "MN962": "iPhone 7 Jet Black - 128 GB",
+        "MN9C2": "iPhone 7 Jet Black - 256 GB",
+        "MN8X2": "iPhone 7 Black - 32 GB",
+        "MN922": "iPhone 7 Black - 128 GB",
+        "MN972": "iPhone 7 Black - 256 GB",
+        "MN902": "iPhone 7 Gold - 32 GB",
+        "MN942": "iPhone 7 Gold - 128 GB",
+        "MN992": "iPhone 7 Gold - 256 GB",
+        "MN912": "iPhone 7 Rose Gold - 32 GB",
+        "MN952": "iPhone 7 Rose Gold - 128 GB",
+        "MN9A2": "iPhone 7 Rose Gold - 256 GB",
+        "MN8Y2": "iPhone 7 Silver - 32 GB",
+        "MN932": "iPhone 7 Silver - 128 GB",
+        "MN982": "iPhone 7 Silver - 256 GB",
+        "MN4V2": "iPhone 7 Plus Jet Black - 128 GB",
+        "MN512": "iPhone 7 Plus Jet Black - 256 GB",
+        "MNQM2": "iPhone 7 Plus Black - 32 GB",
+        "MN4M2": "iPhone 7 Plus Black - 128 GB",
+        "MN4W2": "iPhone 7 Plus Black - 256 GB",
+        "MNQQ2": "iPhone 7 Plus Rose Gold - 32 GB",
+        "MN4U2": "iPhone 7 Plus Rose Gold- 128 GB",
+        "MN4Y2": "iPhone 7 Plus Rose Gold - 256 GB",
+        "MNQP2": "iPhone 7 Plus Gold - 32 GB",
+        "MN4Q2": "iPhone 7 Plus Gold - 128 GB",
+        "MN502": "iPhone 7 Plus Gold - 256 GB",
+        "MNQN2": "iPhone 7 Plus Silver - 32 GB",
+        "MN4P2": "iPhone 7 Plus Silver - 128 GB",
+        "MN4X2": "iPhone 7 Plus Silver - 256 GB",
 		"timeSlot":""
     }
 

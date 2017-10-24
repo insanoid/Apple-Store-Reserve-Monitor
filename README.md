@@ -1,15 +1,14 @@
 # Apple Store Reserve Monitor
 
-A simple script to monitor status of the iPhone availability in a given country. Can be changed to any country and any version of the required device. Makes an audio announcement if there is a change in the stock for the selected store for the selected device.
+A simple script to monitor status of the iPhone availability in a given country. Can be changed to any country and any version of the required device. Makes an audio announcement if there is a change in the stock for the selected store for the selected device. The configuration file has the following variables:
 
-Following are some important variables that you might want to change:
+1. country_code - ISO code for country (2 character) (required)
+2. device_family - `iphone8` or `iphonex` - should be possible for any other family names. (required)
+3. zip_code - ZIP code to search for (e.g. 90210) (required)
+4. models - List the models you are interested about. It does a partial match so country specific information can be stripped (`MQ8J2LL/A`, `MQ8J2`)
+5. carriers - Carriers you are interested in. US carriers - `TMOBILE/US`, `SPRINT/US`, `ATT/US`, `VERIZON/US`, `UNLOCKED/US`. If you are outside US just do not put this in.
+6. stores - ID of the stores you are interested in (you will have to run the script once to get the store ID).
 
-1. **storeurl** - Change this to your region, for example `GB/en_GB` for UK. This fetches a list of stores in your region. Note down `storeNumber` for the stores you want to follow and put it in `pref_stores` array.
-
-2. **availurl** - URL for the stock availability check. Change the region and language to your region in the same way as `storeurl`.
-
-3. **pref_stores** - List of stores that you are interested in knowing stock about.
-
-4. **pref_models** - Model number you are interested in knowing the stock about.
+To get store Id, and model, carrier you will have to run the script once.
 
 ![image](listing.png)

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 # The MIT License (MIT)
 # Copyright (c) 2014 Karthikeya Udupa KM
@@ -23,6 +24,7 @@ import time
 import sys
 import requests
 import json
+import minibar
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -47,10 +49,10 @@ with open('config.json') as json_data_file:
 
 country_code = config.get('country_code')
 device_family = config.get('device_family')
-zip_code = config.get('zip_code')
-selected_device_models = config.get('models')
-selected_carriers = config.get('carriers')
-selected_stores = config.get('stores')
+zip_code = config.get('zip_code', [])
+selected_device_models = config.get('models', [])
+selected_carriers = config.get('carriers', [])
+selected_stores = config.get('stores', [])
 
 ## Since the URL only needs country code for non-US countries, switch the URL for country == US.
 if country_code.upper() == 'US':
@@ -62,7 +64,7 @@ else:
 device_list = []
 
 ## Downloading the list of products from the server for the current device family.
-print('{}> Downloading Models List...'.format(bcolors.WARNING))
+print('{}➜  Downloading Models List...'.format(bcolors.OKBLUE))
 
 product_locator_response = requests.get(product_locator_url.format(base_url, device_family))
 if product_locator_response.status_code == 200:
@@ -77,14 +79,16 @@ if product_locator_response.status_code == 200:
 
 ## Exit if no device was found.
 if len(device_list) == 0:
-    print('{}> No device matching your configuration was found!'.format(bcolors.FAIL))
+    print('{}✖  No device matching your configuration was found!'.format(bcolors.FAIL))
     exit(1)
+else:
+    print('{}✔  Found {} devices matching your config.'.format(bcolors.OKGREEN, len(device_list)))
 
 ## Downloading the list of products from the server.
-print('{}> Downloading Stock Information...'.format(bcolors.WARNING))
+print('{}➜  Downloading Stock Information for the devices...\n'.format(bcolors.OKBLUE))
 
 stores_list_with_stock = {}
-for device in device_list:
+for device in minibar.bar(device_list):
     product_availability_response = requests.get(product_availability_url.format(base_url, device.get('model'), zip_code))
     store_list = product_availability_response.json().get('body').get('stores')
 
@@ -118,7 +122,7 @@ stock_available = False
 
 ## Go through the stores and fetch the stock for all the devices/parts in the store and print their status.
 for store in stores:
-    print('{}{}, {} ({})'.format(bcolors.OKGREEN, store.get('storeName'), store.get('city'), store.get('storeId')))
+    print('\n\n{}{}, {} ({})'.format(bcolors.OKGREEN, store.get('storeName'), store.get('city'), store.get('storeId')))
     for part_id, part in store.get('parts').items():
         if part.get('storeSelectionEnabled') is True:
             stock_available = True
@@ -129,3 +133,4 @@ for store in stores:
 ## Play the sound if phone is available.
 if stock_available:
     os.system('say "Device Available!"')
+print('\n\n')

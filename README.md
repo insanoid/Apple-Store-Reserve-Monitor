@@ -1,4 +1,4 @@
-# Apple Store Reserve Monitor
+# Apple Store Reserve Monitor (Now supports iPhone 8 and iPhone X)
 
 A simple script to monitor status of the iPhone availability in a given country. Can be changed to any country and any version of the required device. Makes an audio announcement if there is a change in the stock for the selected store for the selected device. The configuration file has the following variables:
 

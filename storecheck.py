@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # The MIT License (MIT)
 # Copyright (c) 2014 Karthikeya Udupa KM
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -16,15 +18,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import requests
 import os
 import time
 import sys
+import requests
+import json
 
-##
 reload(sys)
 sys.setdefaultencoding('utf-8')
-
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -33,79 +34,98 @@ class bcolors:
     FAIL = '\033[91m'
     ENDC = '\0330m'
 
-# Change this to alter the monitoring stores and devices
-pref_stores = ['R358', 'R396', 'R352', 'R659']
-pref_models = ['MN4M2', 'MN972']
+## Base URL is the apple's URL used to make product links and also API calls. Country code only for non-US countries.
+base_url = "https://www.apple.com/{0}/"
+## End point for searching for all possible product combinations in the given product family.
+product_locator_url = "{0}shop/product-locator-meta?family={1}"
+## End point for searching for pickup state of a certain model at a certain location.
+product_availability_url = "{0}shop/retail/pickup-message?pl=true&parts.0={1}&location={2}"
 
+## Load the configration from the config, country, device family, zip, models to search for etc.
+with open('config.json') as json_data_file:
+    config = json.load(json_data_file)
 
-# Change the country and language for your location for example (DE/de_DE, GB/en_GB)
-storeurl = "https://reserve.cdn-apple.com/DE/de_DE/reserve/iPhone/stores.json"
-availurl = "https://reserve.cdn-apple.com/DE/de_DE/reserve/iPhone/availability.json"
+country_code = config.get('country_code')
+device_family = config.get('device_family')
+zip_code = config.get('zip_code')
+selected_device_models = config.get('models')
+selected_carriers = config.get('carriers')
+selected_stores = config.get('stores')
 
-
-# Incase of a new version, update models here.
-model_mapping  = {
-    "MN962": "iPhone 7 Jet Black - 128 GB",
-    "MN9C2": "iPhone 7 Jet Black - 256 GB",
-    "MN8X2": "iPhone 7 Black - 32 GB",
-    "MN922": "iPhone 7 Black - 128 GB",
-    "MN972": "iPhone 7 Black - 256 GB",
-    "MN902": "iPhone 7 Gold - 32 GB",
-    "MN942": "iPhone 7 Gold - 128 GB",
-    "MN992": "iPhone 7 Gold - 256 GB",
-    "MN912": "iPhone 7 Rose Gold - 32 GB",
-    "MN952": "iPhone 7 Rose Gold - 128 GB",
-    "MN9A2": "iPhone 7 Rose Gold - 256 GB",
-    "MN8Y2": "iPhone 7 Silver - 32 GB",
-    "MN932": "iPhone 7 Silver - 128 GB",
-    "MN982": "iPhone 7 Silver - 256 GB",
-    "MN4V2": "iPhone 7 Plus Jet Black - 128 GB",
-    "MN512": "iPhone 7 Plus Jet Black - 256 GB",
-    "MNQM2": "iPhone 7 Plus Black - 32 GB",
-    "MN4M2": "iPhone 7 Plus Black - 128 GB",
-    "MN4W2": "iPhone 7 Plus Black - 256 GB",
-    "MNQQ2": "iPhone 7 Plus Rose Gold - 32 GB",
-    "MN4U2": "iPhone 7 Plus Rose Gold- 128 GB",
-    "MN4Y2": "iPhone 7 Plus Rose Gold - 256 GB",
-    "MNQP2": "iPhone 7 Plus Gold - 32 GB",
-    "MN4Q2": "iPhone 7 Plus Gold - 128 GB",
-    "MN502": "iPhone 7 Plus Gold - 256 GB",
-    "MNQN2": "iPhone 7 Plus Silver - 32 GB",
-    "MN4P2": "iPhone 7 Plus Silver - 128 GB",
-    "MN4X2": "iPhone 7 Plus Silver - 256 GB",
-	"timeSlot":""
-}
-
-store_json = requests.get(storeurl).json()
-avail_json = requests.get(availurl).json()
-
-avail_in_required = False
-
-if 'stores' in store_json:
-    for store in store_json['stores']:
-        items =  avail_json.get(store.get('storeNumber'))
-        store_in_prefer = store.get('storeNumber') in pref_stores
-        if store_in_prefer:
-            print('{}{}, {} ({})'.format(bcolors.OKGREEN, store.get('storeName'), store.get('storeCity'), store.get('storeNumber')))
-        items_available = False
-        for model_code in items:
-            if items.get(model_code) != "NONE":
-                partial_model_code = model_code[0:5]
-                model_name = model_mapping.get(partial_model_code, None)
-                if model_name != None:
-                    items_available = True;
-                    if store_in_prefer and partial_model_code in pref_models:
-                        avail_in_required = True;
-                        print('{}    -    {}'.format(bcolors.FAIL, model_name))
-                    elif store_in_prefer:
-                        print('{}    -    {}'.format(bcolors.OKBLUE, model_name))
-
-        if not items_available and store_in_prefer:
-            print('{}Nothing Available\n'.format(bcolors.FAIL))
-    print('{}Updated: {}\n'.format(bcolors.OKBLUE, time.strftime('%d, %b %Y %H:%M:%S')))
-
-    if avail_in_required:
-        os.system('say "iPhone is Available in the required store."')
-
+## Since the URL only needs country code for non-US countries, switch the URL for country == US.
+if country_code.upper() == 'US':
+    base_url = "https://www.apple.com/"
 else:
-    print('{}Data Unavailable: {}\n'.format(bcolors.OKBLUE, time.strftime('%d, %b %Y %H:%M:%S')))
+    base_url = base_url.format(country_code)
+
+## Store the information about the available devices for the family - title, model, carrier.
+device_list = []
+
+## Downloading the list of products from the server for the current device family.
+print('{}> Downloading Models List...'.format(bcolors.WARNING))
+
+product_locator_response = requests.get(product_locator_url.format(base_url, device_family))
+if product_locator_response.status_code == 200:
+    product_list = product_locator_response.json().get('body').get('productLocatorOverlayData').get('productLocatorMeta').get('products')
+    ## Take out the product list and extract only the useful information.
+    for product in product_list:
+        model = product.get('partNumber')
+        carrier = product.get('carrierModel')
+        ## Only add the requested models and requested carriers (device models are partially matched)
+        if (any(item in model for item in selected_device_models) or len(selected_device_models) == 0) and (carrier in selected_carriers or len(selected_carriers) == 0):
+            device_list.append({'title': product.get('productTitle'), 'model': model, "carrier": carrier})
+
+## Exit if no device was found.
+if len(device_list) == 0:
+    print('{}> No device matching your configuration was found!'.format(bcolors.FAIL))
+    exit(1)
+
+## Downloading the list of products from the server.
+print('{}> Downloading Stock Information...'.format(bcolors.WARNING))
+
+stores_list_with_stock = {}
+for device in device_list:
+    product_availability_response = requests.get(product_availability_url.format(base_url, device.get('model'), zip_code))
+    store_list = product_availability_response.json().get('body').get('stores')
+
+    ## Go through all the stores in the list and extract useful information.
+    ## Group products by store (put the stock for this device in the store's parts attribute)
+    for store in store_list:
+        current_store = stores_list_with_stock.get(store.get('storeNumber'))
+        if current_store is None:
+            current_store = {
+                'storeId': store.get('storeNumber'),
+                'storeName': store.get('storeName'),
+                'city': store.get('city'),
+                'sequence': store.get('storeListNumber'),
+                'parts': {}
+            }
+        new_parts = store.get('partsAvailability')
+        old_parts = current_store.get('parts')
+        old_parts.update(new_parts)
+        current_store['parts'] = old_parts
+
+        ## If the store is in the list of user's preferred list, add it to the list to check for stock.
+        if (store.get('storeNumber') in selected_stores or len(selected_stores) == 0):
+            stores_list_with_stock[store.get('storeNumber')] = current_store
+
+## Get all the stores and sort it by the sequence.
+stores = stores_list_with_stock.values()
+stores.sort(key=lambda k : k['sequence'])
+
+## Boolean indicating if the stock is available for any of the items requested (used to play the sound)
+stock_available = False
+
+## Go through the stores and fetch the stock for all the devices/parts in the store and print their status.
+for store in stores:
+    print('{}{}, {} ({})'.format(bcolors.OKGREEN, store.get('storeName'), store.get('city'), store.get('storeId')))
+    for part_id, part in store.get('parts').items():
+        if part.get('storeSelectionEnabled') is True:
+            stock_available = True
+            print(" - {} {} ({})".format(bcolors.OKBLUE, part.get('storePickupProductTitle'), part.get('partNumber')))
+        else:
+            print(" - {} {} ({})".format(bcolors.FAIL, part.get('storePickupProductTitle'), part.get('partNumber')))
+
+## Play the sound if phone is available.
+if stock_available:
+    os.system('say "Device Available!"')

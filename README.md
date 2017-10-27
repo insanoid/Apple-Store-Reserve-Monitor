@@ -17,7 +17,7 @@ The configuration file has the following variables:
 **To get store's ID, and model number, carrier names you will have to run the script once.**
 
 ##How To Run:
-
+-  Ensure you have Python 3.5.4 and run `pip install -r requirements.txt`.
 -  Execute `./storecheck.py` to run once.
 -  Execute `./monitor_run_me.py` to keep running it every 30 seconds.
 

@@ -24,12 +24,12 @@ import signal
 import sys
 
 def signal_handler(signal, frame):
-    print ' - Stop Monitoring'
+    print(' - Stop Monitoring')
     sys.exit(0)
 
 
 signal.signal(signal.SIGINT, signal_handler)
-print 'Apple Store Monitoring \n'
+print('Apple Store Monitoring \n')
 
 while True:
   os.system('python storecheck.py')

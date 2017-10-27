@@ -26,8 +26,6 @@ import requests
 import json
 import minibar
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'

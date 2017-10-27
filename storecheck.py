@@ -112,7 +112,7 @@ for device in minibar.bar(device_list):
             stores_list_with_stock[store.get('storeNumber')] = current_store
 
 ## Get all the stores and sort it by the sequence.
-stores = stores_list_with_stock.values()
+stores = list(stores_list_with_stock.values())
 stores.sort(key=lambda k : k['sequence'])
 
 ## Boolean indicating if the stock is available for any of the items requested (used to play the sound)

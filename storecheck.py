@@ -19,6 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from __future__ import print_function, unicode_literals
+
 import os
 import time
 import sys
@@ -62,7 +64,7 @@ else:
 device_list = []
 
 ## Downloading the list of products from the server for the current device family.
-print(u'{}➜  Downloading Models List...'.format(bcolors.OKBLUE))
+print('{}➜  Downloading Models List...'.format(bcolors.OKBLUE))
 
 product_locator_response = requests.get(product_locator_url.format(base_url, device_family))
 if product_locator_response.status_code == 200:
@@ -77,13 +79,13 @@ if product_locator_response.status_code == 200:
 
 ## Exit if no device was found.
 if len(device_list) == 0:
-    print(u'{}✖  No device matching your configuration was found!'.format(bcolors.FAIL))
+    print('{}✖  No device matching your configuration was found!'.format(bcolors.FAIL))
     exit(1)
 else:
-    print(u'{}✔  Found {} devices matching your config.'.format(bcolors.OKGREEN, len(device_list)))
+    print('{}✔  Found {} devices matching your config.'.format(bcolors.OKGREEN, len(device_list)))
 
 ## Downloading the list of products from the server.
-print(u'{}➜  Downloading Stock Information for the devices...\n'.format(bcolors.OKBLUE))
+print('{}➜  Downloading Stock Information for the devices...\n'.format(bcolors.OKBLUE))
 
 stores_list_with_stock = {}
 for device in minibar.bar(device_list):
@@ -120,7 +122,7 @@ stock_available = False
 
 ## Go through the stores and fetch the stock for all the devices/parts in the store and print their status.
 for store in stores:
-    print(u'\n\n{}{}, {} ({})'.format(bcolors.OKGREEN, store.get('storeName'), store.get('city'), store.get('storeId')))
+    print('\n\n{}{}, {} ({})'.format(bcolors.OKGREEN, store.get('storeName'), store.get('city'), store.get('storeId')))
     for part_id, part in store.get('parts').items():
         if part.get('storeSelectionEnabled') is True:
             stock_available = True
@@ -131,4 +133,4 @@ for store in stores:
 ## Play the sound if phone is available.
 if stock_available:
     os.system('say "Device Available!"')
-print(u'\n\n')
+print('\n\n')

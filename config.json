@@ -1,8 +1,8 @@
 {
-    "country_code": "us",
-    "device_family": "iphone8",
-    "zip_code": "90210",
-    "models":["MQ8J2LL/A"],
-    "carriers":["UNLOCKED/US"],
-    "stores":["R462"]
+  "country_code": "us",
+  "device_family": "iphonexr",
+  "zip_code": "90210",
+  "models": ["MT3X2LL"],
+  "carriers": ["TMOBILE/US", "SPRINT/US", "ATT/US"],
+  "stores": ["R462"]
 }

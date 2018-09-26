@@ -1,6 +1,6 @@
 # Apple Store Reserve Monitor
 
-### Supports iPhone 8, iPhone X, iPhone Xs, and iPhone Xr
+### Supports all iPhones, iPads, and Apple Watch! (Including iPhoneXS,XR!)
 
 A simple script to monitor status of the iPhone availability in a given country. Can be changed to any country, device
 type, and to filter by specific models/carriers/stores. Makes an audio announcement if there is a change in the stock
@@ -19,7 +19,7 @@ The configuration file has the following variables:
 
 **To get store's ID, and model number, carrier names you will have to run the script once.**
 
-### Apple Watch Support
+### Apple Watch
 
 To monitor Apple Watch you can skip family name parameter and just enter the particular model number. An example configuration would
 be something as follows.

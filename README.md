@@ -6,8 +6,6 @@ A simple script to monitor status of the iPhone availability in a given country.
 type, and to filter by specific models/carriers/stores. Makes an audio announcement if there is a change in the stock
 for given configuration.
 
-It does not support Apple Watch (at-least I haven't found a way, but PRs are welcome!)
-
 ### Config.json
 
 The configuration file has the following variables:
@@ -21,7 +19,31 @@ The configuration file has the following variables:
 
 **To get store's ID, and model number, carrier names you will have to run the script once.**
 
-##How To Run:
+### Apple Watch Support
+
+To monitor Apple Watch you can skip family name parameter and just enter the particular model number. An example configuration would
+be something as follows.
+
+```
+{
+  "country_code": "us",
+  "zip_code": "90210",
+  "models": ["MU642LL/A"],
+  "stores": ["R462"]
+}
+```
+
+You can get the correct model number for the device you are looking for from the URL such as
+`https://www.apple.com/shop/buy-watch/apple-watch/silver-aluminum-white-sport-band?preSelect=false&product=MU642LL/A&step=detail#`
+the `product` value is the model number, here are a few examples:
+
+- Apple Watch : Silver Aluminum Case with White Sport Band (MU642LL/A)
+- Apple Watch : Gold Aluminum Case with Pink Sand Sport Band (MU682LL/A)
+- Apple Watch : Space Gray Aluminum Case with Black Sport Band (MU662LL/A)
+
+Thanks to [@rovingrob](https://twitter.com/rovingrob) for pointing this out!
+
+### How To Run:
 
 - Ensure you have Python 3.5.4 and run `pip install -r requirements.txt`.
 - Execute `./storecheck.py` to run once.

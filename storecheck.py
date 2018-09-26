@@ -67,18 +67,25 @@ device_list = []
 print('{}➜  Downloading Models List...'.format(bcolors.OKBLUE))
 
 product_locator_response = requests.get(product_locator_url.format(base_url, device_family))
-if product_locator_response.status_code == 200:
-    product_list = product_locator_response.json().get('body').get('productLocatorOverlayData').get('productLocatorMeta').get('products')
-    ## Take out the product list and extract only the useful information.
-    for product in product_list:
-        model = product.get('partNumber')
-        carrier = product.get('carrierModel')
-        ## Only add the requested models and requested carriers (device models are partially matched)
-        if (any(item in model for item in selected_device_models) or len(selected_device_models) == 0) and (carrier in selected_carriers or len(selected_carriers) == 0):
-            device_list.append({'title': product.get('productTitle'), 'model': model, "carrier": carrier})
+if product_locator_response.status_code == 200 and product_locator_response.json() is not None:
+    try:
+        product_list = product_locator_response.json().get('body').get('productLocatorOverlayData').get('productLocatorMeta').get('products')
+        ## Take out the product list and extract only the useful information.
+        for product in product_list:
+            model = product.get('partNumber')
+            carrier = product.get('carrierModel')
+            ## Only add the requested models and requested carriers (device models are partially matched)
+            if (any(item in model for item in selected_device_models) or len(selected_device_models) == 0) and (carrier in selected_carriers or len(selected_carriers) == 0):
+                device_list.append({'title': product.get('productTitle'), 'model': model, "carrier": carrier})
+    except:
+        print('{}✖  Failed to find the device family'.format(bcolors.FAIL))
+        if selected_device_models is not None:
+            print('{}➜  Looking for device models instead...'.format(bcolors.OKBLUE))
+            for model in selected_device_models:
+                device_list.append({'model': model})
 
 ## Exit if no device was found.
-if len(device_list) == 0:
+if not device_list:
     print('{}✖  No device matching your configuration was found!'.format(bcolors.FAIL))
     exit(1)
 else:

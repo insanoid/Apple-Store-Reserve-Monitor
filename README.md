@@ -12,8 +12,9 @@ The configuration file has the following variables:
 
 1. _country_code_ - ISO code for country (2 character) _(required)_
 2. _device_family_ - Filter the device by the apple device family name. _(required)_
+
 | Device Family Names |
-| --- |
+|---------------------|
 | iphone11pro |
 | iphone11 |
 | iphonexr |

@@ -57,8 +57,8 @@ Thanks to [@rovingrob](https://twitter.com/rovingrob) for pointing this out!
 ### How To Run:
 
 - Ensure you have Python 3.6 and run `pip install -r requirements.txt`.
-- Execute `./storecheck.py` to run once.
-- Execute `./monitor_run_me.py` to keep running it every 30 seconds.
+- Execute `./store_checker.py` to run once.
+- Execute `./monitor.py` to keep running it every 30 seconds.
 
 ![image](listing.png)
 
@@ -339,3 +339,12 @@ Thanks to [@rovingrob](https://twitter.com/rovingrob) for pointing this out!
 |             | iPhone XR 128GB Yellow                          | UNLOCKED/US | MT042LL/A    |
 |             | iPhone XR 128GB Coral                           | UNLOCKED/US | MT072LL/A    |
 |             | iPhone XR 128GB Blue                            | UNLOCKED/US | MT092LL/A    |
+
+
+### Dev Notes
+
+Project uses the following tools to ensure a well formatted code.
+However, as of now it does not have pre-commit hooks or a setup file to run the tools.
+- Black (`black .`)
+- Pycodestyle (`pycodestyle .`)
+- Isort (`.isort -y`)

@@ -1,7 +1,6 @@
 # Apple Store Reserve Monitor
 
-## Supports all iPhone, iPad, and Apple Watch
-#### Including iPhone 11 Pro, iPhone 11, iPad 11 Pro, iPad Air 2019
+### Supports all iPhone, iPad, and Apple Watch including iPhone 11 Pro, iPhone 11, iPad Pro
 
 - A script to monitor status of the iPhone/iPad/Watch availability in a given country.
 - Configuration file to filter by country, device type, models number, carriers, and stores.

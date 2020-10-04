@@ -1,6 +1,8 @@
 # Apple Store Reserve Monitor
 
-### Supports all iPhone, iPad, and Apple Watch including iPhone 11 Pro, iPhone 11, iPad Pro
+## Supports all iPhone, iPad, and Apple Watch
+#### Including iPhone 11 Pro, iPhone 11, iPad 11 Pro, iPad Air 2019
+#### Now also check appointment availability due to COVID-19 store entry restrictions
 
 - A script to monitor status of the iPhone/iPad/Watch availability in a given country.
 - Configuration file to filter by country, device type, models number, carriers, and stores.
@@ -27,7 +29,8 @@ The configuration file has the following variables:
 3. _zip_code_ - ZIP code to search for (e.g. 90210) _(required)_
 4. _models_ - List the models you are interested about, it does a partial match so country specific information can be stripped (`MQ8J2LL/A`, `MQ8J2`). The default value is all available models.
 5. _carriers_ - Carriers you are interested in. US carriers - `TMOBILE/US`, `SPRINT/US`, `ATT/US`, `VERIZON/US`, `UNLOCKED/US`. If you are outside US do not put this in.
-6. _stores_ - ID of the stores you are interested in (you will have to run the script once to get the store ID), default value is all the stores in that region.
+6. _stores_ - ID of the stores you are interested in (you will have to run the script once to get the store ID), default value is all the stores in that region (also available [here](https://gist.github.com/iF2007/ff127f7722af91c47c0cb44d6c1e961d).)
+7. appointment_stores -  ID of the stores you want to look for appointments in. This is optional, if you do not put this configuration the app will not look for appointments. In COVID-19 times appointments have become a hassle to get (at least in Berlin).
 
 **To get store's ID, model number, and carrier names you will have to run the script once.**
 
@@ -40,7 +43,8 @@ To monitor Apple Watch skip family name parameter and just enter the particular 
   "country_code": "us",
   "zip_code": "90210",
   "models": ["MU642LL/A"],
-  "stores": ["R462"]
+  "stores": ["R462"],
+  "appointment_stores": ["R462"],
 }
 ```
 
@@ -60,6 +64,7 @@ Thanks to [@rovingrob](https://twitter.com/rovingrob) for pointing this out!
 - Execute `./monitor.py` to keep running it every 30 seconds.
 
 ![image](listing.png)
+![image](appointment_slot.png)
 
 ### Model Numbers (US)
 

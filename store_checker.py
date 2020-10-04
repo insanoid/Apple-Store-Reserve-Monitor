@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import time
+from datetime import datetime
 
 import crayons
 import minibar
@@ -27,6 +28,8 @@ class Configuration:
         self.selected_device_models = config.get("models", [])
         self.selected_carriers = config.get("carriers", [])
         self.selected_stores = config.get("stores", [])
+        # Store numbers are available here.
+        self.appointment_stores = config.get("appointment_stores", [])
 
 
 class StoreChecker:
@@ -41,6 +44,10 @@ class StoreChecker:
     # End point for searching for pickup state of a certain model at a certain
     # location.
     PRODUCT_AVAILABILITY_URL = "{0}shop/retail/pickup-message?pl=true&parts.0={1}&location={2}"
+    # URL for the store availabile
+    STORE_APPOINTMENT_AVAILABILITY_URL = (
+        "https://retail-pz.cdn-apple.com/product-zone-prod/availability/{0}/20/availability.json"
+    )
 
     def __init__(self, filename="config.json"):
         """Initialize the configuration for checking store(s) for stock."""
@@ -120,6 +127,9 @@ class StoreChecker:
             print("\n{}".format(crayons.red("Current Status - No Stock Available")))
         print("\n")
 
+        if not not self.configuration.appointment_stores:
+            self.get_store_availability()
+
     def find_devices(self):
         """Find the required devices based on the configuration."""
         # Store the information about the available devices for the family -
@@ -196,6 +206,32 @@ class StoreChecker:
                 or len(self.configuration.selected_stores) == 0
             ):
                 self.stores_list_with_stock[store.get("storeNumber")] = current_store
+
+    def get_store_availability(self):
+        """Get a list of all the stores to check appointment availability."""
+        print("{}".format(crayons.blue("➜  Downloading store appointment availability...\n")))
+        store_availability_list = requests.get(
+            self.STORE_APPOINTMENT_AVAILABILITY_URL.format(datetime.now().strftime("%Y-%m-%d"))
+        )
+        slots_found = False
+        for store in store_availability_list.json():
+            if store.get("storeNumber") in self.configuration.appointment_stores:
+                if store.get("appointmentsAvailable") is True:
+                    print(
+                        " - Appointment Slot Available: {} {} ({})".format(
+                            crayons.green("✔"),
+                            store.get("storeNumber"),
+                            datetime.utcfromtimestamp(int(store.get("firstAvailableAppointment"))).strftime(
+                                "%d-%m-%Y %H:%M:%S"
+                            ),
+                        )
+                    )
+                    slots_found = True
+                else:
+                    print(" - {} {}".format(crayons.red("✖"), store.get | ("storeNumber")))
+        if slots_found is True:
+            os.system('say "Appointment Slot Available!"')
+        print("{}".format(crayons.blue("\n✔  Done\n")))
 
 
 if __name__ == "__main__":

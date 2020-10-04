@@ -4,5 +4,6 @@
   "zip_code": "90210",
   "models": ["MW9L2LL"],
   "carriers": ["TMOBILE/US", "SPRINT/US", "ATT/US"],
-  "stores": ["R462"]
+  "stores": ["R462"],
+  "appointment_stores": ["R358", "R462"]
 }

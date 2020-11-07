@@ -70,9 +70,12 @@ Thanks to [@rovingrob](https://twitter.com/rovingrob) for pointing this out!
 
 - These are some model numbers but others can be found easily at third party sellers.
 - Keep in mind these are country specific but you can truncate the information to skip the country information.
+- To get the exact model code for your country go to your country equivalent of https://www.apple.com/de/shop/product-locator-meta?family=iphone12mini and get the `partNumber`.
 
 | Family Name | Product Name                                    | Carrier     | Model Number |
 |-------------|-------------------------------------------------|-------------|--------------|
+| iphone12pro| https://www.theiphonewiki.com/wiki/Models (get model from here and add ZD/A at the end for DE and LL/A for US - see above for different countries)                                                |             |              |
+| iphone12mini| (same as above - for both 12 and 12 Mini)                      |             |              |
 | iphone11pro | iPhone 11 Pro 64GB Space Gray AT&T              | ATT/US      | MW9C2LL/A    |
 |             | iPhone 11 Pro 64GB Silver AT&T                  | ATT/US      | MW9D2LL/A    |
 |             | iPhone 11 Pro 64GB Gold AT&T                    | ATT/US      | MW9E2LL/A    |
@@ -351,4 +354,4 @@ Project uses the following tools to ensure a well formatted code.
 However, as of now it does not have pre-commit hooks or a setup file to run the tools.
 - Black (`black .`)
 - Pycodestyle (`pycodestyle .`)
-- Isort (`.isort -y`)
+- Isort (`isort -y`)

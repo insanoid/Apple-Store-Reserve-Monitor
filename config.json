@@ -1,8 +1,8 @@
 {
-  "country_code": "us",
-  "device_family": "iphone11pro",
-  "zip_code": "90210",
-  "models": ["MW9L2LL"],
+  "country_code": "de",
+  "device_family": "iphone_12_mini",
+  "zip_code": "10369",
+  "models": ["MGJ53ZD/A"],
   "carriers": ["TMOBILE/US", "SPRINT/US", "ATT/US"],
   "stores": ["R462"],
   "appointment_stores": ["R358", "R462"]

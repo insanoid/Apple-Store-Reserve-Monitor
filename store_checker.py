@@ -46,7 +46,7 @@ class StoreChecker:
     PRODUCT_AVAILABILITY_URL = "{0}shop/retail/pickup-message?pl=true&parts.0={1}&location={2}"
     # URL for the store availabile
     STORE_APPOINTMENT_AVAILABILITY_URL = (
-        "https://retail-pz.cdn-apple.com/product-zone-prod/availability/{0}/20/availability.json"
+        "https://retail-pz.cdn-apple.com/product-zone-prod/availability/{0}/{1}/availability.json"
     )
 
     def __init__(self, filename="config.json"):
@@ -143,6 +143,7 @@ class StoreChecker:
         )
 
         if product_locator_response.status_code != 200 or product_locator_response.json() is None:
+            print("----> HERE" + device_list)
             return []
 
         try:
@@ -167,6 +168,7 @@ class StoreChecker:
                     carrier in self.configuration.selected_carriers or len(self.configuration.selected_carriers) == 0
                 ):
                     device_list.append({"title": product.get("productTitle"), "model": model, "carrier": carrier})
+
         except BaseException:
             print("{}".format(crayons.red("✖  Failed to find the device family")))
             if self.configuration.selected_device_models is not None:
@@ -211,7 +213,9 @@ class StoreChecker:
         """Get a list of all the stores to check appointment availability."""
         print("{}".format(crayons.blue("➜  Downloading store appointment availability...\n")))
         store_availability_list = requests.get(
-            self.STORE_APPOINTMENT_AVAILABILITY_URL.format(datetime.now().strftime("%Y-%m-%d"))
+            self.STORE_APPOINTMENT_AVAILABILITY_URL.format(
+                datetime.now().strftime("%Y-%m-%d"), datetime.utcnow().strftime("%H")
+            )
         )
         slots_found = False
         for store in store_availability_list.json():
@@ -228,7 +232,7 @@ class StoreChecker:
                     )
                     slots_found = True
                 else:
-                    print(" - {} {}".format(crayons.red("✖"), store.get | ("storeNumber")))
+                    print(" - {} {}".format(crayons.red("✖"), store.get("storeNumber")))
         if slots_found is True:
             os.system('say "Appointment Slot Available!"')
         print("{}".format(crayons.blue("\n✔  Done\n")))

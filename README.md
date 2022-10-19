@@ -17,8 +17,9 @@ The configuration file has the following variables:
 
 | Device Family Names |
 |---------------------|
-| iphone11pro |
-| iphone11 |
+| iphone14pro |
+| iphone14 |
+| iphone13 |
 | iphonexr |
 | iphone8 |
 | ipadpro_11 |

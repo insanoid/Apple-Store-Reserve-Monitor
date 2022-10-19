@@ -143,7 +143,6 @@ class StoreChecker:
         )
 
         if product_locator_response.status_code != 200 or product_locator_response.json() is None:
-            print("----> HERE" + device_list)
             return []
 
         try:

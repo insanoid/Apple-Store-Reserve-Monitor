@@ -32,7 +32,7 @@ class Monitor:
         """Start monitoring store's stock."""
         while True:
             self.store_checker.refresh()
-            time.sleep(30)
+            time.sleep(300)
 
 
 if __name__ == "__main__":

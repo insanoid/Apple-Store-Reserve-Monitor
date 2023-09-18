@@ -1,9 +1,9 @@
 {
-  "country_code": "de",
-  "device_family": "iphone_12_mini",
-  "zip_code": "10369",
-  "models": ["MGJ53ZD/A"],
-  "carriers": ["TMOBILE/US", "SPRINT/US", "ATT/US"],
-  "stores": ["R462"],
-  "appointment_stores": ["R358", "R462"]
+  "country_code": "au",
+  "device_family": "iphone-15-pro",
+  "zip_code": "3003",
+  "models": ["MU793ZP/A","MU7E3ZP/A"],
+  "stores": ["R504","R530","R343","R342","R180"],
+  "appointment_stores": ["R504","R530","R343","R342","R180"],
+  "discord_url": "https://discord.com/api/webhooks/1153178129578332220/9fMYH7LYLE4HNQfS-cRbAQUGE_7BZgeI3KmJXwvtWfzbgxQqmfZTDcr4BmAUoYlmbC47"
 }

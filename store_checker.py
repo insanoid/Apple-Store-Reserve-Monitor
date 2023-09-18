@@ -10,7 +10,8 @@ from datetime import datetime
 import crayons
 import minibar
 import requests
-
+from alarm import DiscortAgent
+from fake_useragent import UserAgent
 
 class Configuration:
     """Load the configuration from the config, country, device family, zip, models to search for."""
@@ -28,8 +29,10 @@ class Configuration:
         self.selected_device_models = config.get("models", [])
         self.selected_carriers = config.get("carriers", [])
         self.selected_stores = config.get("stores", [])
+        self.webhook_url = config.get("discord_url", None)
         # Store numbers are available here.
         self.appointment_stores = config.get("appointment_stores", [])
+        
 
 
 class StoreChecker:
@@ -55,11 +58,14 @@ class StoreChecker:
         self.configuration = Configuration(filename)
         self.stores_list_with_stock = {}
         self.base_url = "https://www.apple.com/"
-
+        self.ua = UserAgent(browsers=['edge', 'chrome'])
         # Since the URL only needs country code for non-US countries, switch
         # the URL for country == US.
         if self.configuration.country_code.upper() != "US":
             self.base_url = self.APPLE_BASE_URL.format(self.configuration.country_code)
+        if self.configuration.webhook_url:
+            self.webhook_agent = DiscortAgent(self.configuration.webhook_url)
+        self.webhook_agent.send_message(message="Starting Apple Store Monitor")
 
     def refresh(self):
         """Refresh information about the stock that is available on the Apple website."""
@@ -110,6 +116,8 @@ class StoreChecker:
                             crayons.green(part.get("partNumber")),
                         )
                     )
+                    
+                    self.webhook_agent.send_message(message=f"Device {part.get('storePickupProductTitle')} is available at {store.get('storeName')}")
                 else:
                     print(
                         " - {} {} ({})".format(
@@ -139,7 +147,8 @@ class StoreChecker:
         # device family.
         print("{}".format(crayons.blue("➜  Downloading Models List...")))
         product_locator_response = requests.get(
-            self.PRODUCT_LOCATOR_URL.format(self.base_url, self.configuration.device_family)
+            url = self.PRODUCT_LOCATOR_URL.format(self.base_url, self.configuration.device_family),
+            headers= {'User-Agent':self.ua.random}
         )
 
         if product_locator_response.status_code != 200 or product_locator_response.json() is None:
@@ -179,7 +188,8 @@ class StoreChecker:
     def check_stores_for_device(self, device):
         """Find all stores that have the device requested available (does not matter if it's in stock or not)."""
         product_availability_response = requests.get(
-            self.PRODUCT_AVAILABILITY_URL.format(self.base_url, device.get("model"), self.configuration.zip_code)
+            url = self.PRODUCT_AVAILABILITY_URL.format(self.base_url, device.get("model"), self.configuration.zip_code),
+            headers= {'User-Agent': self.ua.random}
         )
         store_list = product_availability_response.json().get("body").get("stores")
         # Go through all the stores in the list and extract useful information.
@@ -212,8 +222,9 @@ class StoreChecker:
         """Get a list of all the stores to check appointment availability."""
         print("{}".format(crayons.blue("➜  Downloading store appointment availability...\n")))
         store_availability_list = requests.get(
-            self.STORE_APPOINTMENT_AVAILABILITY_URL.format(
-                datetime.now().strftime("%Y-%m-%d"), datetime.utcnow().strftime("%H")
+            url = self.STORE_APPOINTMENT_AVAILABILITY_URL.format(
+                datetime.now().strftime("%Y-%m-%d"), datetime.utcnow().strftime("%H"),
+            headers = {'User-Agent': self.ua.random}
             )
         )
         slots_found = False
